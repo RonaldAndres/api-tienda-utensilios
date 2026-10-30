@@ -1,6 +1,6 @@
 # API REST - Tienda de utensilios de cocina
 
-API hecha con Node.js, Express y MySQL (esquema del profesor: rutas, controladores y modelos).
+API hecha con Node.js, Express y MySQL (esquema : rutas, controladores y modelos).
 Tiene un CRUD completo para cada una de las 9 tablas de la base de datos `tienda_utensilios`.
 
 ## Instalación
@@ -15,6 +15,8 @@ npm i body-parser
 
 ## Variables de entorno
 
+## Variables de entorno
+
 | Variable | Descripción | Valor local por defecto |
 |---|---|---|
 | DB_HOST | Servidor MySQL | localhost |
@@ -23,6 +25,9 @@ npm i body-parser
 | DB_NAME | Nombre de la base de datos | tienda_utensilios |
 | DB_PORT | Puerto MySQL | 3306 |
 | PORT | Puerto donde corre la API | 3000 |
+
+Las credenciales reales de la nube NO están en el código ni en este archivo: se configuran como variables de entorno en el servicio donde se despliega la API (Render) y, para ejecutar en local, vienen en el archivo `.env` del comprimido de entrega.
+
 
 Las credenciales reales de la nube NO están en el código: se configuran como variables de entorno en el servicio donde se despliega la API.
 
@@ -36,7 +41,7 @@ La API queda en `http://localhost:3000`. Ejemplo: `http://localhost:3000/api/pro
 
 ### Opciones para ejecutarla
 
-**API pública (no requiere instalar nada):** `https://PEGAR-AQUI-LA-URL-DE-RENDER.onrender.com/api/productos/getProductos`
+**API pública (no requiere instalar nada):** `https://api-tienda-utensilios.onrender.com/`
 
 **Local, con la base de datos en la nube:** en la carpeta del proyecto, `npm install` (la primera vez) y `node index.js`.
 El archivo `.env` incluido en el comprimido de entrega ya trae los datos de conexión a Clever Cloud; Node lo lee solo.

@@ -31,7 +31,7 @@ app.use('/api/resenas', resenaRoutes);
 app.get('/', (req, res)=>{
     res.status(200).json({
         proyecto: 'Tienda de Utensilios',
-        mensaje: 'API funcionando correctamente',
+        mensaje: 'API D correctamente',
         rutas: {
             categorias: '/api/categorias/getCategorias',
             marcas: '/api/marcas/getMarcas',
