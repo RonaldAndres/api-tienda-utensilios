@@ -17,14 +17,18 @@ npm i body-parser
 
 ## Variables de entorno
 
-| Variable | Descripción | Valor local por defecto |
-|---|---|---|
-| DB_HOST | Servidor MySQL | localhost |
-| DB_USER | Usuario MySQL | root |
-| DB_PASSWORD | Contraseña MySQL | (vacía) |
-| DB_NAME | Nombre de la base de datos | tienda_utensilios |
-| DB_PORT | Puerto MySQL | 3306 |
-| PORT | Puerto donde corre la API | 3000 |
+Host
+bvhl1h4a4dnzum2pfbq9-mysql.services.clever-cloud.com
+Database Name
+bvhl1h4a4dnzum2pfbq9
+User
+usbj2livfeb23ks4
+Password
+igkl8nW7W3qREaOUoM60
+
+Port
+3306
+
 
 Las credenciales reales de la nube NO están en el código ni en este archivo: se configuran como variables de entorno en el servicio donde se despliega la API (Render) y, para ejecutar en local, vienen en el archivo `.env` del comprimido de entrega.
 
