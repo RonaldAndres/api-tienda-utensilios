@@ -91,8 +91,8 @@ module.exports = {
             res.status(400).json({message: mensaje});
             return;
         }
-        const {codigo, nombre, descripcion, precio, stock, id_categoria, id_marca} = body;
-        productoModel.postProducto(codigo, nombre, descripcion, precio, stock, id_categoria, id_marca, (err, id)=>{
+        const {codigo, nombre, descripcion, precio, stock, imagen, id_categoria, id_marca} = body;
+        productoModel.postProducto(codigo, nombre, descripcion, precio, stock, imagen, id_categoria, id_marca, (err, id)=>{
             if(err){
                 manejarError(err, res);
                 return;
@@ -109,8 +109,8 @@ module.exports = {
             res.status(400).json({message: mensaje});
             return;
         }
-        const {codigo, nombre, descripcion, precio, stock, id_categoria, id_marca} = body;
-        productoModel.putProducto(id, codigo, nombre, descripcion, precio, stock, id_categoria, id_marca, (err, result)=>{
+        const {codigo, nombre, descripcion, precio, stock, imagen, id_categoria, id_marca} = body;
+        productoModel.putProducto(id, codigo, nombre, descripcion, precio, stock, imagen, id_categoria, id_marca, (err, result)=>{
             if(err){
                 manejarError(err, res);
                 return;

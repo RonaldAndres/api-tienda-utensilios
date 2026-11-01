@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tienda de Utensilios de Cocina</title>
+<style>
+:root{--rojo:#c0392b;--rojo-osc:#a5301f;--gris:#f4f1ee;--texto:#2b2b2b;--borde:#e2dcd6;--ok:#2e7d32}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--texto);background:var(--gris)}
+header{background:#fff;border-bottom:1px solid var(--borde);position:sticky;top:0;z-index:5}
+.barra{max-width:1100px;margin:auto;padding:12px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.logo{font-weight:700;font-size:1.2rem;color:var(--rojo)}
+.barra input[type=search]{flex:1;min-width:160px;padding:10px 12px;border:1px solid var(--borde);border-radius:8px;font-size:1rem}
+button{cursor:pointer;font-size:1rem;border:0;border-radius:8px;padding:10px 14px}
+.btn{background:var(--rojo);color:#fff}.btn:hover{background:var(--rojo-osc)}
+.btn:disabled{background:#bbb;cursor:not-allowed}
+.sec{background:#fff;border:1px solid var(--borde);color:var(--texto)}
+main{max-width:1100px;margin:auto;padding:16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:#fff;border:1px solid var(--borde);border-radius:999px;padding:7px 14px;font-size:.95rem}
+.chip.on{background:var(--rojo);color:#fff;border-color:var(--rojo)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--borde);border-radius:12px;overflow:hidden;display:flex;flex-direction:column}
+.img{height:150px;background:#faf7f4;display:flex;align-items:center;justify-content:center;font-size:4rem}
+.img img{width:100%;height:100%;object-fit:cover}
+.info{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.info h3{margin:0;font-size:1.05rem}.meta{font-size:.85rem;color:#777}
+.precio{font-size:1.2rem;font-weight:700}
+.stock{font-size:.85rem}.stock.bajo{color:#b26a00}.stock.agotado{color:#b00020}
+.info .btn{margin-top:auto}
+dialog{border:0;border-radius:14px;padding:0;width:min(560px,94vw);max-height:92vh}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.dlg{padding:18px;display:flex;flex-direction:column;gap:12px}
+.dlg h2{margin:0}
+.linea{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--borde);padding:8px 0}
+.cant{display:flex;gap:6px;align-items:center}.cant button{padding:4px 10px}
+form .fila{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+form label{display:flex;flex-direction:column;font-size:.85rem;gap:4px}
+form input,form select{padding:9px;border:1px solid var(--borde);border-radius:8px;font-size:1rem}
+.msg{padding:10px;border-radius:8px;font-size:.95rem}
+.msg.err{background:#fdecea;color:#b00020}.msg.ok{background:#e8f5e9;color:var(--ok)}
+.total{font-size:1.2rem;font-weight:700;text-align:right}
+@media(max-width:520px){form .fila{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="barra">
+    <span class="logo">🍳 Tienda de Utensilios</span>
+    <input type="search" id="buscar" placeholder="Buscar productos...">
+    <button class="btn" id="btnCarrito">🛒 Carrito (<span id="contador">0</span>)</button>
+  </div>
+</header>
+<main>
+  <div class="chips" id="chips"></div>
+  <div id="estado" class="msg ok">Cargando catálogo... (la primera vez puede tardar hasta un minuto)</div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<dialog id="dlgCarrito"><div class="dlg">
+  <h2>Tu carrito</h2>
+  <div id="lineas"></div>
+  <div class="total" id="totalCarrito"></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button class="sec" id="cerrarCarrito">Seguir comprando</button>
+    <button class="btn" id="irPagar">Finalizar compra</button>
+  </div>
+</div></dialog>
+
+<dialog id="dlgPago"><div class="dlg">
+  <h2>Datos de la compra</h2>
+  <form id="formPago">
+    <div class="fila">
+      <label>Documento<input name="documento" required></label>
+      <label>Teléfono<input name="telefono"></label>
+      <label>Nombre<input name="nombre" required></label>
+      <label>Apellido<input name="apellido" required></label>
+      <label>Correo<input name="correo" type="email" required></label>
+      <label>Ciudad<input name="ciudad" required></label>
+    </div>
+    <label style="margin-top:10px">Dirección de envío<input name="direccion" required></label>
+    <label style="margin-top:10px">Método de pago<select name="id_metodo_pago" id="metodos" required></select></label>
+    <div class="total" id="totalPago" style="margin-top:10px"></div>
+    <div id="msgPago"></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:10px">
+      <button type="button" class="sec" id="cerrarPago">Volver</button>
+      <button class="btn" id="confirmar">Confirmar pedido</button>
+    </div>
+  </form>
+</div></dialog>
+
+<script>
+const fmt = (n)=> '$' + Number(n).toLocaleString('es-CO');
+const esc = (s)=> String(s == null ? '' : s).replace(/[&<>"']/g, (c)=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ICONOS = {'Ollas':'🍲','Sartenes':'🍳','Cuchillos':'🔪','Licuadoras':'🥤','Vajillas':'🍽️','Vasos y Tazas':'☕','Utensilios de Cocina':'🥄','Arroceras':'🍚','Pailas':'🥘','Electrodomésticos Pequeños':'🥪'};
+
+let productos = [], categorias = [], categoriaActiva = 'Todas';
+let carrito = [];
+try { carrito = JSON.parse(localStorage.getItem('carrito') || '[]'); } catch (e) { carrito = []; }
+const guardar = ()=> { try { localStorage.setItem('carrito', JSON.stringify(carrito)); } catch (e) {} };
+
+async function api(url, opciones){
+  const r = await fetch(url, opciones);
+  const j = await r.json().catch(()=> ({}));
+  if(!r.ok){ throw new Error(j.message || j.error || 'Ocurrió un error'); }
+  return j;
+}
+const $ = (id)=> document.getElementById(id);
+const producto = (id)=> productos.find((p)=> p.id_producto === id);
+
+async function cargar(){
+  try {
+    const [p, c, m] = await Promise.all([
+      api('/api/productos/getProductos'),
+      api('/api/categorias/getCategorias'),
+      api('/api/metodos_pago/getMetodosPago')
+    ]);
+    productos = p.data; categorias = c.data;
+    $('metodos').innerHTML = m.data.map((x)=> '<option value="' + x.id_metodo_pago + '">' + esc(x.nombre) + '</option>').join('');
+    carrito = carrito.filter((i)=> producto(i.id)).map((i)=> ({id: i.id, cantidad: Math.min(i.cantidad, producto(i.id).stock)})).filter((i)=> i.cantidad > 0);
+    $('estado').style.display = 'none';
+    pintarChips(); pintarProductos(); pintarContador();
+  } catch (e) {
+    $('estado').className = 'msg err';
+    $('estado').textContent = 'No se pudo cargar el catálogo: ' + e.message;
+  }
+}
+
+function pintarChips(){
+  const nombres = ['Todas'].concat(categorias.map((c)=> c.nombre));
+  $('chips').innerHTML = nombres.map((n)=> '<button class="chip' + (n === categoriaActiva ? ' on' : '') + '" data-cat="' + esc(n) + '">' + esc(n) + '</button>').join('');
+}
+
+function pintarProductos(){
+  const q = $('buscar').value.trim().toLowerCase();
+  const lista = productos.filter((p)=> (categoriaActiva === 'Todas' || p.categoria === categoriaActiva) &&
+    (p.nombre + ' ' + p.marca + ' ' + (p.descripcion || '')).toLowerCase().includes(q));
+  if(lista.length === 0){ $('grid').innerHTML = '<p>No hay productos que coincidan.</p>'; return; }
+  $('grid').innerHTML = lista.map((p)=> {
+    const img = p.imagen ? '<img src="' + esc(p.imagen) + '" alt="' + esc(p.nombre) + '">' : (ICONOS[p.categoria] || '🍴');
+    const st = p.stock <= 0 ? '<span class="stock agotado">Agotado</span>' : p.stock <= 5 ? '<span class="stock bajo">Quedan ' + p.stock + '</span>' : '<span class="stock">Disponible</span>';
+    return '<div class="card"><div class="img">' + img + '</div><div class="info"><h3>' + esc(p.nombre) + '</h3>' +
+      '<div class="meta">' + esc(p.marca) + ' · ' + esc(p.categoria) + '</div>' +
+      '<div class="meta">' + esc(p.descripcion || '') + '</div>' +
+      '<div class="precio">' + fmt(p.precio) + '</div>' + st +
+      '<button class="btn" data-add="' + p.id_producto + '"' + (p.stock <= 0 ? ' disabled' : '') + '>Agregar al carrito</button></div></div>';
+  }).join('');
+}
+
+function pintarContador(){ $('contador').textContent = carrito.reduce((s, i)=> s + i.cantidad, 0); }
+function totalCarrito(){ return carrito.reduce((s, i)=> s + producto(i.id).precio * i.cantidad, 0); }
+
+function agregar(id){
+  const p = producto(id); const it = carrito.find((i)=> i.id === id);
+  if(it){ if(it.cantidad < p.stock){ it.cantidad++; } } else { carrito.push({id: id, cantidad: 1}); }
+  guardar(); pintarContador();
+}
+
+function pintarCarrito(){
+  if(carrito.length === 0){ $('lineas').innerHTML = '<p>Tu carrito está vacío.</p>'; $('totalCarrito').textContent = ''; $('irPagar').disabled = true; return; }
+  $('irPagar').disabled = false;
+  $('lineas').innerHTML = carrito.map((i)=> { const p = producto(i.id);
+    return '<div class="linea"><div><strong>' + esc(p.nombre) + '</strong><div class="meta">' + fmt(p.precio) + ' c/u</div></div>' +
+      '<div class="cant"><button class="sec" data-menos="' + i.id + '">−</button><span>' + i.cantidad + '</span><button class="sec" data-mas="' + i.id + '">+</button>' +
+      '<button class="sec" data-quitar="' + i.id + '">🗑</button></div></div>'; }).join('');
+  $('totalCarrito').textContent = 'Total: ' + fmt(totalCarrito());
+}
+
+document.addEventListener('click', (e)=> {
+  const t = e.target;
+  if(t.dataset.cat){ categoriaActiva = t.dataset.cat; pintarChips(); pintarProductos(); }
+  if(t.dataset.add){ agregar(Number(t.dataset.add)); }
+  if(t.dataset.mas){ agregar(Number(t.dataset.mas)); pintarCarrito(); }
+  if(t.dataset.menos){ const it = carrito.find((i)=> i.id === Number(t.dataset.menos)); it.cantidad--; if(it.cantidad <= 0){ carrito = carrito.filter((i)=> i !== it); } guardar(); pintarContador(); pintarCarrito(); }
+  if(t.dataset.quitar){ carrito = carrito.filter((i)=> i.id !== Number(t.dataset.quitar)); guardar(); pintarContador(); pintarCarrito(); }
+});
+$('buscar').addEventListener('input', pintarProductos);
+$('btnCarrito').addEventListener('click', ()=> { pintarCarrito(); $('dlgCarrito').showModal(); });
+$('cerrarCarrito').addEventListener('click', ()=> $('dlgCarrito').close());
+$('irPagar').addEventListener('click', ()=> { $('dlgCarrito').close(); $('msgPago').innerHTML = ''; $('totalPago').textContent = 'Total a pagar: ' + fmt(totalCarrito()); $('confirmar').disabled = false; $('dlgPago').showModal(); });
+$('cerrarPago').addEventListener('click', ()=> $('dlgPago').close());
+
+$('formPago').addEventListener('submit', async (e)=> {
+  e.preventDefault();
+  const f = new FormData($('formPago'));
+  const cliente = {}; ['documento','nombre','apellido','correo','telefono','direccion','ciudad'].forEach((k)=> cliente[k] = f.get(k));
+  $('confirmar').disabled = true;
+  try {
+    const r = await api('/api/ventas/postVenta', { method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ cliente: cliente, id_metodo_pago: Number(f.get('id_metodo_pago')), items: carrito.map((i)=> ({id_producto: i.id, cantidad: i.cantidad})) }) });
+    $('msgPago').innerHTML = '<div class="msg ok">¡Gracias por tu compra! Tu pedido es el número <strong>' + r.data.id_pedido + '</strong>. Total: ' + fmt(r.data.total) + '.</div>';
+    carrito = []; guardar(); pintarContador(); $('formPago').reset();
+    await cargar();
+  } catch (err) {
+    $('msgPago').innerHTML = '<div class="msg err">' + esc(err.message) + '</div>';
+    $('confirmar').disabled = false;
+  }
+});
+
+cargar();
+</script>
+</body>
+</html>
