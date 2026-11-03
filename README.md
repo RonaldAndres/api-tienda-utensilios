@@ -227,3 +227,59 @@ Calificación y comentario de un cliente sobre un producto.
 | POST | `/api/resenas/postResena` | Crea la reseña nuevo con los datos enviados. | Sí |
 | PUT | `/api/resenas/putResena/:id` | Actualiza la reseña con el id indicado. | Sí |
 | DELETE | `/api/resenas/deleteResena/:id` | Elimina la reseña con el id indicado. | No |
+
+## Cómo añadir pedidos y verlos
+
+La API incluye dos páginas para trabajar sin herramientas externas.
+
+URL base: `https://api-tienda-utensilios.onrender.com`
+
+> La primera carga puede tardar hasta un minuto si el servidor estaba dormido.
+
+### 1. Añadir un pedido desde la tienda
+
+1. Abre `/tienda`.
+2. Añade productos al carrito.
+3. Llena tus datos (documento, nombre, apellido, correo, dirección y ciudad) y elige el método de pago.
+4. Finaliza la compra.
+
+Se crea el cliente (o se reutiliza si el documento ya existe), el pedido y su detalle, y el stock de los productos baja automáticamente.
+
+### 2. Ver el pedido registrado
+
+- **Panel de administración:** abre `/admin`, escribe cualquier clave (si no hay `ADMIN_KEY` configurada) y entra a la pestaña **Pedidos**.
+- **API (JSON):** abre `/api/ventas/getVentas`, o `/api/ventas/getVentaById/:id` para un pedido concreto.
+- **Stock actualizado:** abre `/api/productos/getProductos`.
+
+### 3. Añadir un pedido con Postman
+
+`POST /api/ventas/postVenta` con Body en formato JSON:
+
+```json
+{
+  "cliente": {
+    "documento": "1234567890",
+    "nombre": "Pedro",
+    "apellido": "Gómez",
+    "correo": "pedro.gomez@correo.com",
+    "telefono": "3001234567",
+    "direccion": "Calle 10 #20-30",
+    "ciudad": "Barranquilla"
+  },
+  "id_metodo_pago": 1,
+  "items": [
+    { "id_producto": 1, "cantidad": 2 },
+    { "id_producto": 3, "cantidad": 1 }
+  ]
+}
+```
+
+Respuesta esperada: `201` con el número del pedido y el total.
+
+### Errores comunes
+
+| Código | Causa |
+|---|---|
+| 400 | Faltan datos obligatorios o la cantidad no es válida |
+| 404 | El producto o el pedido no existe |
+| 409 | Stock insuficiente, o el correo ya
