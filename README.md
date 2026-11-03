@@ -36,7 +36,7 @@ node index.js
 ```
 
 - **En local:** abrir `http://localhost:3000`.
-- **En internet:** abrir https://api-tienda-utensilios.onrender.com (la primera petición puede tardar cerca de un minuto, porque el servicio gratuito se suspende cuando no se usa).
+- **En internet:** abrir https://api-tienda-utensilios.onrender.com/tienda (la primera petición puede tardar cerca de un minuto, porque el servicio gratuito se suspende cuando no se usa).
 
 La ruta inicial `GET /` muestra el estado de la API y los enlaces de lectura de cada tabla, de la tienda (`/tienda`) y del panel de administración (`/admin`).
 
