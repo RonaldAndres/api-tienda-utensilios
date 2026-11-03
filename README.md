@@ -2,7 +2,7 @@
 
 API hecha con Node.js, Express y MySQL, con la estructura del profesor (rutas, controladores y modelos). Tiene un CRUD completo (crear, leer, actualizar y eliminar) para cada una de las 9 tablas de la base de datos `tienda_utensilios`, alojada en la nube.
 
-- **URL pública de la API:** https://api-tienda-utensilios.onrender.com
+- **URL pública de la API:** https://api-tienda-utensilios.onrender.com/tienda
 - **Repositorio:** https://github.com/RonaldAndres/api-tienda-utensilios
 
 ## Instalación
