@@ -38,6 +38,7 @@ node index.js
 - **En local:** abrir `http://localhost:3000`.
 - **En internet:** abrir https://api-tienda-utensilios.onrender.com/tienda (la primera petición puede tardar cerca de un minuto, porque el servicio gratuito se suspende cuando no se usa).
 - para ver pedidos incrustados https://api-tienda-utensilios.onrender.com/api/productos/getProductos
+- https://api-tienda-utensilios.onrender.com/admin (No tiene adminKey)
 
 La ruta inicial `GET /` muestra el estado de la API y los enlaces de lectura de cada tabla, de la tienda (`/tienda`) y del panel de administración (`/admin`).
 
