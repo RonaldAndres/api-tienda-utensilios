@@ -32,7 +32,7 @@ app.use('/api', (req, res, next)=>{
     if(esCompra || (req.method === 'GET' && !esPrivada)){
         return next();
     }
-    if(req.headers['admin'] === clave){
+    if(req.headers['admin'] === clave || req.headers['x-admin-key'] === clave){
         return next();
     }
     res.status(401).json({message: 'No autorizado: falta la clave de administrador'});
