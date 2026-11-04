@@ -4,7 +4,7 @@ API hecha con Node.js, Express y MySQL, con la estructura del profesor (rutas, c
 
 - **URL pública de la API:** https://api-tienda-utensilios.onrender.com/tienda
 - **Repositorio:** https://github.com/RonaldAndres/api-tienda-utensilios
-
+puedes visualizar tambien los pedidos en https://api-tienda-utensilios.onrender.com/admin
 ## Instalación
 
 ```
