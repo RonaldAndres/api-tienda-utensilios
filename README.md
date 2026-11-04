@@ -4,7 +4,10 @@ API hecha con Node.js, Express y MySQL, con la estructura del profesor (rutas, c
 
 - **URL pública de la API:** https://api-tienda-utensilios.onrender.com/tienda
 - **Repositorio:** https://github.com/RonaldAndres/api-tienda-utensilios
-puedes visualizar tambien los pedidos en https://api-tienda-utensilios.onrender.com/admin
+En /admin: pestaña Pedidos. Es el lugar más fácil para verlo con cliente, estado y total;https://api-tienda-utensilios.onrender.com/admin
+En el navegador: abre https://api-tienda-utensilios.onrender.com/api/ventas/getVentas. Sale el JSON con todos los pedidos.
+En /tienda: el pedido no se lista ahí. Esa página solo sirve para comprar, y lo único que cambia es el stock del producto.
+
 ## Instalación
 
 ```
